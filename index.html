@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asadbek — Ma'lumotlar avtomatizatsiyasi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F1B2B;
+    --panel: #16243A;
+    --panel-2: #1C2E47;
+    --line: rgba(237,234,224,0.10);
+    --amber: #D9A441;
+    --amber-soft: rgba(217,164,65,0.14);
+    --sage: #6FA98A;
+    --paper: #EDEAE0;
+    --muted: #8B97A8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--paper);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:700; letter-spacing:-0.01em; }
+
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 28px; }
+
+  /* subtle ledger grid background */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* NAV */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(15,27,43,0.85);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:68px; }
+  .brand{ font-family:'Fraunces', serif; font-weight:700; font-size:1.15rem; }
+  .brand .dot{ color:var(--amber); }
+  nav ul{ list-style:none; display:flex; gap:28px; }
+  nav a{ font-size:0.92rem; color:var(--muted); transition:color .2s; }
+  nav a:hover{ color:var(--paper); }
+  .nav-cta{
+    background:var(--amber); color:var(--bg) !important;
+    padding:9px 18px; border-radius:2px; font-weight:600; font-size:0.88rem;
+  }
+
+  section{ position:relative; z-index:1; }
+
+  /* HERO */
+  .hero{ padding:110px 0 90px; }
+  .hero-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono', monospace; font-size:0.78rem; letter-spacing:0.06em;
+    color:var(--amber); text-transform:uppercase; margin-bottom:20px;
+  }
+  .eyebrow::before{ content:"●"; font-size:0.6rem; }
+  .hero h1{ font-size:clamp(2.1rem, 4.2vw, 3.4rem); line-height:1.08; margin-bottom:22px; }
+  .hero h1 em{ font-style:italic; color:var(--amber); }
+  .hero p{ font-size:1.06rem; color:var(--muted); max-width:520px; margin-bottom:32px; }
+  .btn-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    display:inline-block; padding:14px 26px; border-radius:2px; font-weight:600; font-size:0.94rem;
+    transition:transform .2s, background .2s;
+  }
+  .btn-primary{ background:var(--amber); color:var(--bg); }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-ghost{ border:1px solid var(--line); color:var(--paper); }
+  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
+
+  /* Signature: animated spreadsheet ledger */
+  .ledger{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .ledger-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 16px; border-bottom:1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--muted);
+  }
+  .ledger-head .status{ color:var(--sage); display:flex; align-items:center; gap:6px; }
+  .ledger-head .status::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--sage); animation:pulse 1.8s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+  .ledger-row{
+    display:grid; grid-template-columns:1.4fr 1fr 0.9fr;
+    font-family:'IBM Plex Mono', monospace; font-size:0.8rem;
+    border-bottom:1px solid var(--line);
+  }
+  .ledger-row > div{ padding:11px 14px; color:var(--muted); }
+  .ledger-row.header > div{ color:var(--amber); font-weight:600; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .ledger-row .val{ color:var(--paper); opacity:0; transform:translateY(4px); transition:opacity .5s, transform .5s; }
+  .ledger-row .val.in{ opacity:1; transform:translateY(0); }
+  .ledger-row .tag{ font-size:0.7rem; padding:2px 7px; border-radius:2px; background:var(--amber-soft); color:var(--amber); opacity:0; transition:opacity .5s; }
+  .ledger-row .tag.in{ opacity:1; }
+
+  /* SECTION HEADERS */
+  .sec-head{ margin-bottom:44px; }
+  .sec-eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:0.76rem; color:var(--amber); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px; }
+  .sec-head h2{ font-size:clamp(1.6rem, 3vw, 2.2rem); }
+
+  /* SERVICES */
+  .services{ padding:80px 0; border-top:1px solid var(--line); }
+  .svc-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+  .svc-card{ background:var(--bg); padding:32px 26px; }
+  .svc-num{ font-family:'IBM Plex Mono', monospace; color:var(--amber); font-size:0.8rem; margin-bottom:18px; }
+  .svc-card h3{ font-size:1.15rem; margin-bottom:12px; }
+  .svc-card p{ color:var(--muted); font-size:0.92rem; }
+
+  /* PROJECTS */
+  .projects{ padding:80px 0; border-top:1px solid var(--line); }
+  .proj{
+    display:grid; grid-template-columns:0.85fr 1.15fr; gap:0;
+    border:1px solid var(--line); margin-bottom:24px; border-radius:4px; overflow:hidden;
+  }
+  .proj-visual{
+    background:var(--panel); padding:30px; display:flex; flex-direction:column; justify-content:center; gap:14px;
+    border-right:1px solid var(--line);
+  }
+  .proj-visual .kicker{ font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; }
+  .proj-visual h3{ font-size:1.35rem; }
+  .stack{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .stack span{ font-family:'IBM Plex Mono', monospace; font-size:0.72rem; padding:4px 9px; border:1px solid var(--line); border-radius:2px; color:var(--muted); }
+  .proj-body{ padding:30px 32px; background:var(--panel-2); }
+  .proj-row{ margin-bottom:16px; }
+  .proj-row:last-child{ margin-bottom:0; }
+  .proj-row .label{ font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color:var(--amber); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+  .proj-row p{ font-size:0.92rem; color:var(--paper); opacity:0.88; }
+
+  /* SKILLS */
+  .skills{ padding:80px 0; border-top:1px solid var(--line); }
+  .skill-tags{ display:flex; flex-wrap:wrap; gap:12px; }
+  .skill-tags span{
+    font-family:'IBM Plex Mono', monospace; font-size:0.86rem; padding:9px 16px;
+    border:1px solid var(--line); border-radius:2px; color:var(--paper);
+    transition:border-color .2s, color .2s;
+  }
+  .skill-tags span:hover{ border-color:var(--amber); color:var(--amber); }
+
+  /* CONTACT */
+  .contact{ padding:90px 0 110px; border-top:1px solid var(--line); text-align:center; }
+  .contact h2{ font-size:clamp(1.8rem,3.6vw,2.6rem); margin-bottom:16px; }
+  .contact p{ color:var(--muted); max-width:480px; margin:0 auto 32px; }
+  .contact-links{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+
+  footer{ border-top:1px solid var(--line); padding:26px 0; text-align:center; color:var(--muted); font-size:0.82rem; font-family:'IBM Plex Mono', monospace; }
+
+  @media (max-width:820px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .svc-grid{ grid-template-columns:1fr; }
+    .proj{ grid-template-columns:1fr; }
+    .proj-visual{ border-right:none; border-bottom:1px solid var(--line); }
+    nav ul{ display:none; }
+  }
+
+  [data-reveal]{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+  [data-reveal].in{ opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Asadbek<span class="dot">.</span></div>
+    <ul>
+      <li><a href="#xizmatlar">Xizmatlar</a></li>
+      <li><a href="#loyihalar">Loyihalar</a></li>
+      <li><a href="#konikmalar">Ko'nikmalar</a></li>
+    </ul>
+    <a href="#aloqa" class="nav-cta">Bog'lanish</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Freelance / ma'lumotlar avtomatizatsiyasi</div>
+      <h1>Hisobotlaringiz endi <em>o'z-o'zidan</em> yig'iladi.</h1>
+      <p>Men savdo va ombor platformalaridan ma'lumotlarni qo'lda emas — avtomatik yig'ib, Google Sheets va tayyor dashboardlarga aylantiraman. Vaqtingiz tejaladi, xatolar kamayadi.</p>
+      <div class="btn-row">
+        <a href="#aloqa" class="btn btn-primary">Telegram orqali bog'lanish</a>
+        <a href="#loyihalar" class="btn btn-ghost">Loyihalarni ko'rish</a>
+      </div>
+    </div>
+
+    <div class="ledger" data-reveal>
+      <div class="ledger-head">
+        <span>sheets-automation.py</span>
+        <span class="status">sync faol</span>
+      </div>
+      <div class="ledger-row header">
+        <div>Platforma</div><div>Filial</div><div>Holat</div>
+      </div>
+      <div class="ledger-row" id="row1">
+        <div class="val">Smartup</div><div class="val">Samarqand</div><div class="tag">✓ yuklandi</div>
+      </div>
+      <div class="ledger-row" id="row2">
+        <div class="val">Antexpert</div><div class="val">Ahmad Tea</div><div class="tag">✓ yuklandi</div>
+      </div>
+      <div class="ledger-row" id="row3">
+        <div class="val">SalesDoc</div><div class="val">Namangan</div><div class="tag">✓ yuklandi</div>
+      </div>
+      <div class="ledger-row" id="row4">
+        <div class="val">Linko.uz</div><div class="val">Jizzax</div><div class="tag">✓ yuklandi</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="xizmatlar">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="sec-eyebrow">Nima qilaman</div>
+      <h2>Xizmatlar</h2>
+    </div>
+    <div class="svc-grid" data-reveal>
+      <div class="svc-card">
+        <div class="svc-num">01</div>
+        <h3>Ma'lumot yig'ish avtomatizatsiyasi</h3>
+        <p>Smartup, Antexpert, SalesDoc, Linko.uz kabi platformalardan sotuv va ombor ma'lumotlarini avtomatik yig'ib, Google Sheets'ga yuklash.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-num">02</div>
+        <h3>Hisobot va dashboard</h3>
+        <p>Bajarilish foizi, kunlik sur'at, prognoz kabi ko'rsatkichlar bilan tezkor tushunarli dashboard yasash.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-num">03</div>
+        <h3>Sheets/Excel formulalashtirish</h3>
+        <p>Murakkab formulalar, avtomatik hisob-kitoblar, ma'lumotlarni tozalash va to'g'ri tuzilmaga solish.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="projects" id="loyihalar">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="sec-eyebrow">Ishlar</div>
+      <h2>Loyihalar</h2>
+    </div>
+
+    <div class="proj" data-reveal>
+      <div class="proj-visual">
+        <div class="kicker">Case study — 01</div>
+        <h3>Ko'p platformali savdo hisobot tizimi</h3>
+        <div class="stack">
+          <span>Python</span><span>Playwright</span><span>Google Sheets API</span>
+        </div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-row">
+          <div class="label">Muammo</div>
+          <p>Har kuni bir nechta platformadan (Smartup, Antexpert, SalesDoc, Linko.uz) qo'lda ma'lumot yig'ish soatlab vaqt olardi va xatolarga yo'l qo'yardi.</p>
+        </div>
+        <div class="proj-row">
+          <div class="label">Yechim</div>
+          <p>Playwright asosidagi avtomatik skriptlar tizimi — login, filtrlash va export jarayonlarini o'zi bajaradi, natijalarni to'g'ridan-to'g'ri Google Sheets'ga yozadi. Task Scheduler orqali har kuni avtomatik ishlaydi.</p>
+        </div>
+        <div class="proj-row">
+          <div class="label">Natija</div>
+          <p>Kunlik hisobotlar qo'l tegmasdan tayyor bo'ladi, xatoliklar sezilarli kamaydi.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="proj" data-reveal>
+      <div class="proj-visual">
+        <div class="kicker">Case study — 02</div>
+        <h3>Ahmad Tea — Savdo Dashboard</h3>
+        <div class="stack">
+          <span>FastAPI</span><span>SQLite</span><span>React</span>
+        </div>
+      </div>
+      <div class="proj-body">
+        <div class="proj-row">
+          <div class="label">Muammo</div>
+          <p>Savdo ma'lumotlarini vizual va tezkor tarzda ko'rish, taqqoslash imkoni yo'q edi — hammasi jadval qatorlarida yashiringan edi.</p>
+        </div>
+        <div class="proj-row">
+          <div class="label">Yechim</div>
+          <p>FastAPI + SQLite backend va React (Vite) frontend asosida dashboard; ma'lumotlar Antexpert'dan Playwright skripti orqali avtomatik yig'ilib, bazaga yoziladi.</p>
+        </div>
+        <div class="proj-row">
+          <div class="label">Natija</div>
+          <p>Filial va davr bo'yicha savdo holatini bir necha soniyada ko'rish imkoni paydo bo'ldi.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="skills" id="konikmalar">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="sec-eyebrow">Vositalar</div>
+      <h2>Ko'nikmalar</h2>
+    </div>
+    <div class="skill-tags" data-reveal>
+      <span>Python</span>
+      <span>Playwright</span>
+      <span>Google Sheets API</span>
+      <span>SQL</span>
+      <span>FastAPI</span>
+      <span>React</span>
+      <span>Excel / Sheets formulalari</span>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="aloqa">
+  <div class="wrap" data-reveal>
+    <h2>Loyihangizni muhokama qilamizmi?</h2>
+    <p>Ma'lumotlaringizni avtomatlashtirish yoki hisobot tizimi kerakmi — yozing, birga ko'rib chiqamiz.</p>
+    <div class="contact-links">
+      <a href="https://t.me/SIZNING_USERNAME" class="btn btn-primary">Telegram</a>
+      <a href="mailto:sizning@email.com" class="btn btn-ghost">Email</a>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 Asadbek — Ma'lumotlar avtomatizatsiyasi</footer>
+
+<script>
+  // reveal on scroll
+  const revealEls = document.querySelectorAll('[data-reveal]');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  // ledger rows animate in sequence, loop
+  function animateLedger(){
+    const rows = ['row1','row2','row3','row4'];
+    rows.forEach(id=>{
+      document.querySelectorAll('#'+id+' .val, #'+id+' .tag').forEach(el=>el.classList.remove('in'));
+    });
+    rows.forEach((id, i)=>{
+      setTimeout(()=>{
+        document.querySelectorAll('#'+id+' .val, #'+id+' .tag').forEach(el=>el.classList.add('in'));
+      }, i*450 + 300);
+    });
+  }
+  animateLedger();
+  setInterval(animateLedger, 6000);
+</script>
+
+</body>
+</html>
