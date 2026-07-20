@@ -7,183 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg: #0F1B2B;
-    --panel: #16243A;
-    --panel-2: #1C2E47;
-    --line: rgba(237,234,224,0.10);
-    --amber: #D9A441;
-    --amber-soft: rgba(217,164,65,0.14);
-    --sage: #6FA98A;
-    --paper: #EDEAE0;
-    --muted: #8B97A8;
-  }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--bg);
-    color:var(--paper);
-    font-family:'Inter', sans-serif;
-    line-height:1.5;
-    overflow-x:hidden;
-  }
-  .mono{ font-family:'IBM Plex Mono', monospace; }
-  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:700; letter-spacing:-0.01em; }
-
-  a{ color:inherit; text-decoration:none; }
-  .wrap{ max-width:1080px; margin:0 auto; padding:0 28px; }
-
-  /* subtle ledger grid background */
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    background-image:
-      linear-gradient(var(--line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size: 64px 64px;
-    opacity:0.35;
-    pointer-events:none;
-    z-index:0;
-  }
-
-  /* NAV */
-  nav{
-    position:sticky; top:0; z-index:50;
-    background:rgba(15,27,43,0.85);
-    backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line);
-  }
-  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:68px; }
-  .brand{ font-family:'Fraunces', serif; font-weight:700; font-size:1.15rem; }
-  .brand .dot{ color:var(--amber); }
-  nav ul{ list-style:none; display:flex; gap:28px; }
-  nav a{ font-size:0.92rem; color:var(--muted); transition:color .2s; }
-  nav a:hover{ color:var(--paper); }
-  .nav-cta{
-    background:var(--amber); color:var(--bg) !important;
-    padding:9px 18px; border-radius:2px; font-weight:600; font-size:0.88rem;
-  }
-
-  section{ position:relative; z-index:1; }
-
-  /* HERO */
-  .hero{ padding:110px 0 90px; }
-  .hero-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center; }
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:8px;
-    font-family:'IBM Plex Mono', monospace; font-size:0.78rem; letter-spacing:0.06em;
-    color:var(--amber); text-transform:uppercase; margin-bottom:20px;
-  }
-  .eyebrow::before{ content:"●"; font-size:0.6rem; }
-  .hero h1{ font-size:clamp(2.1rem, 4.2vw, 3.4rem); line-height:1.08; margin-bottom:22px; }
-  .hero h1 em{ font-style:italic; color:var(--amber); }
-  .hero p{ font-size:1.06rem; color:var(--muted); max-width:520px; margin-bottom:32px; }
-  .btn-row{ display:flex; gap:14px; flex-wrap:wrap; }
-  .btn{
-    display:inline-block; padding:14px 26px; border-radius:2px; font-weight:600; font-size:0.94rem;
-    transition:transform .2s, background .2s;
-  }
-  .btn-primary{ background:var(--amber); color:var(--bg); }
-  .btn-primary:hover{ transform:translateY(-2px); }
-  .btn-ghost{ border:1px solid var(--line); color:var(--paper); }
-  .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
-
-  /* Signature: animated spreadsheet ledger */
-  .ledger{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:4px;
-    overflow:hidden;
-  }
-  .ledger-head{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:12px 16px; border-bottom:1px solid var(--line);
-    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--muted);
-  }
-  .ledger-head .status{ color:var(--sage); display:flex; align-items:center; gap:6px; }
-  .ledger-head .status::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--sage); animation:pulse 1.8s infinite; }
-  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
-  .ledger-row{
-    display:grid; grid-template-columns:1.4fr 1fr 0.9fr;
-    font-family:'IBM Plex Mono', monospace; font-size:0.8rem;
-    border-bottom:1px solid var(--line);
-  }
-  .ledger-row > div{ padding:11px 14px; color:var(--muted); }
-  .ledger-row.header > div{ color:var(--amber); font-weight:600; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; }
-  .ledger-row .val{ color:var(--paper); opacity:0; transform:translateY(4px); transition:opacity .5s, transform .5s; }
-  .ledger-row .val.in{ opacity:1; transform:translateY(0); }
-  .ledger-row .tag{ font-size:0.7rem; padding:2px 7px; border-radius:2px; background:var(--amber-soft); color:var(--amber); opacity:0; transition:opacity .5s; }
-  .ledger-row .tag.in{ opacity:1; }
-
-  /* SECTION HEADERS */
-  .sec-head{ margin-bottom:44px; }
-  .sec-eyebrow{ font-family:'IBM Plex Mono', monospace; font-size:0.76rem; color:var(--amber); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px; }
-  .sec-head h2{ font-size:clamp(1.6rem, 3vw, 2.2rem); }
-
-  /* SERVICES */
-  .services{ padding:80px 0; border-top:1px solid var(--line); }
-  .svc-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
-  .svc-card{ background:var(--bg); padding:32px 26px; }
-  .svc-num{ font-family:'IBM Plex Mono', monospace; color:var(--amber); font-size:0.8rem; margin-bottom:18px; }
-  .svc-card h3{ font-size:1.15rem; margin-bottom:12px; }
-  .svc-card p{ color:var(--muted); font-size:0.92rem; }
-
-  /* PROJECTS */
-  .projects{ padding:80px 0; border-top:1px solid var(--line); }
-  .proj{
-    display:grid; grid-template-columns:0.85fr 1.15fr; gap:0;
-    border:1px solid var(--line); margin-bottom:24px; border-radius:4px; overflow:hidden;
-  }
-  .proj-visual{
-    background:var(--panel); padding:30px; display:flex; flex-direction:column; justify-content:center; gap:14px;
-    border-right:1px solid var(--line);
-  }
-  .proj-visual .kicker{ font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; }
-  .proj-visual h3{ font-size:1.35rem; }
-  .stack{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
-  .stack span{ font-family:'IBM Plex Mono', monospace; font-size:0.72rem; padding:4px 9px; border:1px solid var(--line); border-radius:2px; color:var(--muted); }
-  .proj-body{ padding:30px 32px; background:var(--panel-2); }
-  .proj-row{ margin-bottom:16px; }
-  .proj-row:last-child{ margin-bottom:0; }
-  .proj-row .label{ font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color:var(--amber); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
-  .proj-row p{ font-size:0.92rem; color:var(--paper); opacity:0.88; }
-
-  /* SKILLS */
-  .skills{ padding:80px 0; border-top:1px solid var(--line); }
-  .skill-tags{ display:flex; flex-wrap:wrap; gap:12px; }
-  .skill-tags span{
-    font-family:'IBM Plex Mono', monospace; font-size:0.86rem; padding:9px 16px;
-    border:1px solid var(--line); border-radius:2px; color:var(--paper);
-    transition:border-color .2s, color .2s;
-  }
-  .skill-tags span:hover{ border-color:var(--amber); color:var(--amber); }
-
-  /* CONTACT */
-  .contact{ padding:90px 0 110px; border-top:1px solid var(--line); text-align:center; }
-  .contact h2{ font-size:clamp(1.8rem,3.6vw,2.6rem); margin-bottom:16px; }
-  .contact p{ color:var(--muted); max-width:480px; margin:0 auto 32px; }
-  .contact-links{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
-
-  footer{ border-top:1px solid var(--line); padding:26px 0; text-align:center; color:var(--muted); font-size:0.82rem; font-family:'IBM Plex Mono', monospace; }
-
-  @media (max-width:820px){
-    .hero-grid{ grid-template-columns:1fr; }
-    .svc-grid{ grid-template-columns:1fr; }
-    .proj{ grid-template-columns:1fr; }
-    .proj-visual{ border-right:none; border-bottom:1px solid var(--line); }
-    nav ul{ display:none; }
-  }
-
-  [data-reveal]{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
-  [data-reveal].in{ opacity:1; transform:translateY(0); }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav>
   <div class="wrap">
-    <div class="brand">Asadbek Mustafoev<span class="">.</span></div>
+    <div class="brand">Asadbek<span class="dot">.</span></div>
     <ul>
       <li><a href="#xizmatlar">Xizmatlar</a></li>
       <li><a href="#loyihalar">Loyihalar</a></li>
@@ -201,7 +31,7 @@
       <p>Men savdo va ombor platformalaridan ma'lumotlarni qo'lda emas — avtomatik yig'ib, Google Sheets va tayyor dashboardlarga aylantiraman. Vaqtingiz tejaladi, xatolar kamayadi.</p>
       <div class="btn-row">
         <a href="#aloqa" class="btn btn-primary">Telegram orqali bog'lanish</a>
-        <a href="#loyihalar" class="btn btn-ghost">Loyihalarni ko'rish</a>
+        <button type="button" onclick="openProjectsModal()" class="btn btn-ghost">Loyihalarni ko'rish</button>
       </div>
     </div>
 
@@ -283,6 +113,7 @@
           <div class="label">Natija</div>
           <p>Kunlik hisobotlar qo'l tegmasdan tayyor bo'ladi, xatoliklar sezilarli kamaydi.</p>
         </div>
+        <button type="button" onclick="openProjectsModal('loyiha-1')" class="btn btn-ghost" style="margin-top:6px; padding:9px 18px; font-size:0.85rem;">Batafsil ko'rish</button>
       </div>
     </div>
 
@@ -307,6 +138,7 @@
           <div class="label">Natija</div>
           <p>Filial va davr bo'yicha savdo holatini bir necha soniyada ko'rish imkoni paydo bo'ldi.</p>
         </div>
+        <button type="button" onclick="openProjectsModal('loyiha-2')" class="btn btn-ghost" style="margin-top:6px; padding:9px 18px; font-size:0.85rem;">Batafsil ko'rish</button>
       </div>
     </div>
   </div>
@@ -335,13 +167,106 @@
     <h2>Loyihangizni muhokama qilamizmi?</h2>
     <p>Ma'lumotlaringizni avtomatlashtirish yoki hisobot tizimi kerakmi — yozing, birga ko'rib chiqamiz.</p>
     <div class="contact-links">
-      <a href="https://t.me/asad_invest" class="btn btn-primary">Telegram</a>
-      <a href="mailto:asadbekmustafoyev07@icloud.com" class="btn btn-ghost">Email</a>
+      <a href="https://t.me/SIZNING_USERNAME" class="btn btn-primary">Telegram</a>
+      <a href="mailto:sizning@email.com" class="btn btn-ghost">Email</a>
     </div>
   </div>
 </section>
 
-<footer>© 2026 Asadbek Mustafoyev — Ma'lumotlar avtomatizatsiyasi</footer>
+<!-- LOYIHALAR MODAL -->
+<div class="modal-overlay" id="projectsModal" onclick="if(event.target===this) closeProjectsModal()">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <span class="mono">Loyihalar — batafsil</span>
+      <button type="button" class="modal-close" onclick="closeProjectsModal()" aria-label="Yopish">&times;</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="case" id="modal-loyiha-1">
+        <div class="case-top">
+          <div>
+            <div class="kicker">Case study — 01</div>
+            <h2>Ko'p platformali savdo hisobot tizimi</h2>
+          </div>
+        </div>
+
+        <div class="gallery">
+          <div class="shot"><img src="images/loyiha1-1.png" alt="Skript ishlash jarayoni" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-1.png<br>skript jarayoni skrinshoti</div></div>
+          <div class="shot"><img src="images/loyiha1-2.png" alt="Google Sheets natijasi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-2.png<br>Google Sheets natijasi</div></div>
+          <div class="shot"><img src="images/loyiha1-3.png" alt="Task Scheduler sozlamasi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-3.png<br>Task Scheduler sozlamasi</div></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat"><div class="num">4</div><div class="desc">platforma bir tizimda</div></div>
+          <div class="stat"><div class="num">1x/kun</div><div class="desc">avtomatik ishga tushish</div></div>
+          <div class="stat"><div class="num">0</div><div class="desc">qo'lda kirish talab qilinmaydi</div></div>
+        </div>
+
+        <div class="case-detail">
+          <div>
+            <div class="label">Muammo</div>
+            <p>Har kuni bir nechta platformadan (Smartup, Antexpert, SalesDoc, Linko.uz) qo'lda ma'lumot yig'ish soatlab vaqt olardi va inson xatosiga yo'l qo'yardi.</p>
+          </div>
+          <div>
+            <div class="label">Yechim</div>
+            <p>Playwright asosidagi brauzer avtomatizatsiyasi — login, filtrlash, export jarayonlarini o'zi bajaradi. Internet uzilishida qayta urinish logikasi va try/finally logout bloklari bilan mustahkamlangan. Natijalar gspread orqali to'g'ridan-to'g'ri Google Sheets'ga yoziladi.</p>
+          </div>
+          <div>
+            <div class="label">Ishga tushirish</div>
+            <p>Barcha skriptlar bitta <code>run_all.bat</code> fayli orqali, Windows Task Scheduler yordamida har kuni belgilangan vaqtda avtomatik ishga tushadi.</p>
+          </div>
+        </div>
+
+        <div class="stack-full">
+          <span>Python</span><span>Playwright</span><span>gspread</span><span>Google Sheets API</span><span>Task Scheduler</span>
+        </div>
+      </div>
+
+      <div class="case" id="modal-loyiha-2">
+        <div class="case-top">
+          <div>
+            <div class="kicker">Case study — 02</div>
+            <h2>Ahmad Tea — Savdo Dashboard</h2>
+          </div>
+        </div>
+
+        <div class="gallery">
+          <div class="shot"><img src="images/loyiha2-1.png" alt="Dashboard umumiy ko'rinishi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-1.png<br>dashboard umumiy ko'rinishi</div></div>
+          <div class="shot"><img src="images/loyiha2-2.png" alt="Filial bo'yicha filtr" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-2.png<br>filial bo'yicha filtr</div></div>
+          <div class="shot"><img src="images/loyiha2-3.png" alt="KPI ko'rsatkichlari" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-3.png<br>KPI ko'rsatkichlari</div></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat"><div class="num">FastAPI</div><div class="desc">backend</div></div>
+          <div class="stat"><div class="num">React</div><div class="desc">frontend (Vite)</div></div>
+          <div class="stat"><div class="num">SQLite</div><div class="desc">ma'lumotlar bazasi</div></div>
+        </div>
+
+        <div class="case-detail">
+          <div>
+            <div class="label">Muammo</div>
+            <p>Savdo ma'lumotlari jadval qatorlarida yashiringan edi — filial va davr bo'yicha tez taqqoslash, umumiy holatni bir qarashda ko'rish imkoni yo'q edi.</p>
+          </div>
+          <div>
+            <div class="label">Yechim</div>
+            <p>FastAPI + SQLite backend ma'lumotlarni saqlaydi va API orqali beradi, React (Vite) frontend esa jadval va grafiklar shaklida ko'rsatadi. Ma'lumotlar Antexpert'dan alohida Playwright skripti orqali avtomatik yig'ilib, bazaga yoziladi.</p>
+          </div>
+          <div>
+            <div class="label">Hozirgi holat</div>
+            <p>Loyiha ishlab turibdi, va uni o'zim tushunib, mustaqil qo'llab-quvvatlash (xato tuzatish, yangi filtr/ustun qo'shish) uchun bosqichma-bosqich o'rganish jarayonidaman.</p>
+          </div>
+        </div>
+
+        <div class="stack-full">
+          <span>Python</span><span>FastAPI</span><span>SQLite</span><span>React</span><span>Vite</span><span>Playwright</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Asadbek — Ma'lumotlar avtomatizatsiyasi</footer>
 
 <script>
   // reveal on scroll
@@ -367,6 +292,28 @@
   }
   animateLedger();
   setInterval(animateLedger, 6000);
+
+  // Loyihalar modal
+  function openProjectsModal(scrollToId){
+    const modal = document.getElementById('projectsModal');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    if(scrollToId){
+      setTimeout(()=>{
+        const target = document.getElementById('modal-'+scrollToId);
+        if(target){ target.scrollIntoView({block:'start'}); }
+      }, 50);
+    } else {
+      modal.querySelector('.modal-body').scrollTop = 0;
+    }
+  }
+  function closeProjectsModal(){
+    document.getElementById('projectsModal').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') closeProjectsModal();
+  });
 </script>
 
 </body>
