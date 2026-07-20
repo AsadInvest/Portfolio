@@ -76,7 +76,7 @@
   }
   .btn-primary{ background:var(--amber); color:var(--bg); }
   .btn-primary:hover{ transform:translateY(-2px); }
-  .btn-ghost{ border:1px solid var(--line); color:var(--paper); }
+  .btn-ghost{ border:1px solid var(--amber); color:var(--paper); }
   .btn-ghost:hover{ border-color:var(--amber); color:var(--amber); }
 
   /* Signature: animated spreadsheet ledger */
