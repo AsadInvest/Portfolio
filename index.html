@@ -204,9 +204,9 @@
         </div>
 
         <div class="gallery">
-          <div class="shot"><img src="images/loyiha1-1.png" alt="Skript ishlash jarayoni" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-1.png<br>skript jarayoni skrinshoti</div></div>
-          <div class="shot"><img src="images/loyiha1-2.png" alt="Google Sheets natijasi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-2.png<br>Google Sheets natijasi</div></div>
-          <div class="shot"><img src="images/loyiha1-3.png" alt="Task Scheduler sozlamasi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-3.png<br>Task Scheduler sozlamasi</div></div>
+          <div class="shot"><img onclick="openLightbox('images/loyiha1-1.png', 'Skript ishlash jarayoni')" style="cursor:zoom-in;" src="images/loyiha1-1.png" alt="Skript ishlash jarayoni" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-1.png<br>skript jarayoni skrinshoti</div></div>
+          <div class="shot"><img onclick="openLightbox('images/loyiha1-2.png', 'Google Sheets natijasi')" style="cursor:zoom-in;" src="images/loyiha1-2.png" alt="Google Sheets natijasi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-2.png<br>Google Sheets natijasi</div></div>
+          <div class="shot"><img onclick="openLightbox('images/loyiha1-3.png', 'Task Scheduler sozlamasi')" style="cursor:zoom-in;" src="images/loyiha1-3.png" alt="Task Scheduler sozlamasi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha1-3.png<br>Task Scheduler sozlamasi</div></div>
         </div>
 
         <div class="stat-row">
@@ -244,9 +244,9 @@
         </div>
 
         <div class="gallery">
-          <div class="shot"><img src="images/loyiha2-1.png" alt="Dashboard umumiy ko'rinishi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-1.png<br>dashboard umumiy ko'rinishi</div></div>
-          <div class="shot"><img src="images/loyiha2-2.png" alt="Filial bo'yicha filtr" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-2.png<br>filial bo'yicha filtr</div></div>
-          <div class="shot"><img src="images/loyiha2-3.png" alt="KPI ko'rsatkichlari" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-3.png<br>KPI ko'rsatkichlari</div></div>
+          <div class="shot"><img onclick="openLightbox('images/loyiha2-1.png', 'Dashboard umumiy ko\'rinishi')" style="cursor:zoom-in;" src="images/loyiha2-1.png" alt="Dashboard umumiy ko'rinishi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-1.png<br>dashboard umumiy ko'rinishi</div></div>
+          <div class="shot"><img onclick="openLightbox('images/loyiha2-2.png', 'Filial bo\'yicha filtr')" style="cursor:zoom-in;" src="images/loyiha2-2.png" alt="Filial bo'yicha filtr" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-2.png<br>filial bo'yicha filtr</div></div>
+          <div class="shot"><img onclick="openLightbox('images/loyiha2-3.png', 'KPI ko\'rsatkichlari')" style="cursor:zoom-in;" src="images/loyiha2-3.png" alt="KPI ko'rsatkichlari" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="placeholder" style="display:none">images/loyiha2-3.png<br>KPI ko'rsatkichlari</div></div>
         </div>
 
         <div class="stat-row">
@@ -282,6 +282,13 @@
 </div>
 
 <footer>© 2026 Asadbek Mustafoyev — Ma'lumotlar avtomatizatsiyasi</footer>
+
+<!-- LIGHTBOX (rasm kattalashtirish) -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+  <button type="button" class="lightbox-close" onclick="closeLightbox()" aria-label="Yopish">&times;</button>
+  <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
 
 <script>
   // reveal on scroll
@@ -363,6 +370,23 @@
     modalBodyEl.addEventListener('scroll', updateActiveByScroll, { passive:true });
   }
   setActiveNav('modal-loyiha-1');
+
+  // Lightbox (rasmni kattalashtirib ko'rish)
+  function openLightbox(src, caption){
+    const overlay = document.getElementById('lightboxOverlay');
+    const img = document.getElementById('lightboxImg');
+    const cap = document.getElementById('lightboxCaption');
+    img.src = src;
+    img.alt = caption || '';
+    cap.textContent = caption || '';
+    overlay.classList.add('show');
+  }
+  function closeLightbox(){
+    document.getElementById('lightboxOverlay').classList.remove('show');
+  }
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') closeLightbox();
+  });
 </script>
 
 </body>
