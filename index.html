@@ -317,9 +317,11 @@
       setTimeout(()=>{
         const target = document.getElementById(scrollToId.startsWith('modal-') ? scrollToId : 'modal-'+scrollToId);
         if(target){ target.scrollIntoView({block:'start'}); }
+        if(typeof updateActiveByScroll === 'function') updateActiveByScroll();
       }, 50);
     } else {
       modal.querySelector('.modal-body').scrollTop = 0;
+      if(typeof updateActiveByScroll === 'function') updateActiveByScroll();
     }
   }
   function closeProjectsModal(){
@@ -346,13 +348,19 @@
       item.classList.toggle('active', item.getAttribute('data-case') === id);
     });
   }
+  const modalCaseEls = Array.from(document.querySelectorAll('.modal-body .case'));
+  function updateActiveByScroll(){
+    if(!modalBodyEl || modalCaseEls.length === 0) return;
+    const probeLine = modalBodyEl.getBoundingClientRect().top + 120; // near top of viewport
+    let currentId = modalCaseEls[0].id;
+    for(const el of modalCaseEls){
+      const rect = el.getBoundingClientRect();
+      if(rect.top <= probeLine){ currentId = el.id; } else { break; }
+    }
+    setActiveNav(currentId);
+  }
   if(modalBodyEl){
-    const caseObserver = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){ setActiveNav(entry.target.id); }
-      });
-    }, { root: modalBodyEl, threshold: 0.35 });
-    document.querySelectorAll('.modal-body .case').forEach(el=>caseObserver.observe(el));
+    modalBodyEl.addEventListener('scroll', updateActiveByScroll, { passive:true });
   }
   setActiveNav('modal-loyiha-1');
 </script>
